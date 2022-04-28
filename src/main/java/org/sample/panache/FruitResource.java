@@ -6,7 +6,6 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +21,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Gauge;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.jboss.logging.Logger;
+
+import io.quarkus.panache.common.Sort;
 
 @Path("fruits")
 @ApplicationScoped
@@ -33,6 +38,7 @@ public class FruitResource {
     private static final Logger LOGGER = Logger.getLogger(FruitResource.class.getName());
 
     @GET
+    @Counted(name = "list.all.fruits", absolute = true)
     public List<Fruit> get() {
         return Fruit.listAll();
     }
@@ -44,6 +50,7 @@ public class FruitResource {
     }
 
     @POST
+    @Timed(name = "time.create.fruit", absolute = true, description = "time it takes to create a new fruit", unit = MetricUnits.MILLISECONDS)
     @Transactional
     public Response create(Fruit fruit) {
         if (fruit == null || fruit.id != null) {
@@ -92,4 +99,19 @@ public class FruitResource {
 
         return result.get();
     }
+
+    @GET
+    @Transactional
+    @Gauge(name = "most.expensive.fruit", 
+    absolute = true,
+    description = "Most expensive fruit on the market", 
+    unit = MetricUnits.NONE)
+    @Path("/price")
+    public Long getFruitsWithATreeCodeCount() {
+
+        Fruit fruit = Fruit.findAll(Sort.descending("price")).firstResult();
+        return fruit != null ? fruit.price : 0L;
+
+    }
+
 }

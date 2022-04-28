@@ -12,20 +12,23 @@ public class Fruit extends PanacheEntity {
 
     public String name;
 
+    public Long price;
+
     @ManyToOne( cascade = CascadeType.ALL)
     public Tree tree;
 
     public Fruit() {
     }
 
-    public Fruit(String name, Tree tree) {
+    public Fruit(String name, Long price, Tree tree) {
         this.name = name;
         this.tree = tree;
+        this.price = price;
     }
 
     @JsonbCreator
-    public static Fruit of(String name, Tree tree) {
-        return new Fruit(name, tree);
+    public static Fruit of(String name, Long price, Tree tree) {
+        return new Fruit(name, price, tree);
     }
 
     @Override
