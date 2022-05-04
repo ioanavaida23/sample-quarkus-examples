@@ -14,7 +14,7 @@ public class Fruit extends PanacheEntity {
 
     public Long price;
 
-    @ManyToOne( cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     public Tree tree;
 
     public Fruit() {

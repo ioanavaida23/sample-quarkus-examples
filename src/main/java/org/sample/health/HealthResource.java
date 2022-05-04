@@ -14,7 +14,6 @@ public class HealthResource implements HealthCheck{
 
     @Override
     public HealthCheckResponse call() {
-        // TODO Auto-generated method stub
         return HealthCheckResponse.named("Is it up?")
         .withData("Time now", Instant.now().toString())
         .up()
